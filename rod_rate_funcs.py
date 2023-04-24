@@ -107,7 +107,7 @@ def rate_func_bvp(s, y):
     
     # u, v from m, n
     u = K_se @ np.einsum('ijk,ki->ji', np.transpose(R, [0, 2, 1]), m) + u_star
-    v = K_se @ np.einsum('ijk,ki->ji', np.transpose(R, [0, 2, 1]), n) + v_star
+    v = K_bt @ np.einsum('ijk,ki->ji', np.transpose(R, [0, 2, 1]), n) + v_star
     
     # u_hat = mat_skew_sym_3(u)
     # v_hat = mat_skew_sym_3(v)

@@ -82,7 +82,8 @@ def plot_rod_plotly(soln):
             zaxis=dict(range=new_ranges[2, :])
         ),
     )
-    fig.show()
+
+    return fig
 
 def plot_rod_mpl(soln):
     # Using matplotlib for now as plotly is being annoying about rods
