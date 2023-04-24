@@ -8,7 +8,7 @@ from scipy.integrate import solve_ivp, solve_bvp
 from scipy.spatial.transform import Rotation as rot
 
 st.subheader("Cantilevered Beam Example")
-load_mass = st.slider("Load", 0., 0.05, 0.01, step=0.001, format="%.3f")
+load_mass = st.slider("Load (kg)", 0., 0.05, 0.01, step=0.001, format="%.3f")
 
 ## Define our boundary conditions
 # Wall end: fix position and orientation
@@ -43,7 +43,7 @@ bvp_soln = solve_bvp(rate_func_bvp, f_bound_conds, s_grid, y_0_mesh)
 
 ## Plot the solution
 fig = plot_rod_plotly(bvp_soln)
-fig.update_layout(width=600, height=800, scene_camera=dict(eye=dict(x=0.7,y=1.3,z=0.6)))
+fig.update_layout(width=600, height=800, scene_camera=dict(eye=dict(x=0.5,y=1.1,z=0.4)))
 st.plotly_chart(fig, use_container_width=True)
 
 st.subheader("Cantilievered Beam Validation")

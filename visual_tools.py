@@ -58,7 +58,8 @@ def plot_rod_plotly(soln):
         y = soln.y[1, :],
         z = soln.y[2, :],
         name="Rod",
-        marker=dict(size=2)
+        marker=dict(size=3),
+        line=dict(width=5, color='black')
     ))
 
     mins = np.min(soln.y[0:3, :], axis=1)
