@@ -4,6 +4,7 @@ This project contains a simple elastic rod simulation based on an implementation
 ![Beam loading gif](https://im4.ezgif.com/tmp/ezgif-4-3587016f68.gif)
 
 ## Model
+
 System Diagram | Model Equations
 - | - 
 ![System diagram](https://media.discordapp.net/attachments/421939066930462723/1100061734506602637/image.png) | ![Model equations](https://media.discordapp.net/attachments/421939066930462723/1100061822423408772/image.png)
