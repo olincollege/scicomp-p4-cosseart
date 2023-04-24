@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from rod_rate_funcs import rate_func_bvp
-from visual_tools import plot_transforms
+from visual_tools import plot_rod_plotly
 
 import numpy as np
 from scipy.integrate import solve_ivp, solve_bvp
@@ -13,7 +13,7 @@ p_0 = np.array([0, 0, 0])
 R_q_0 = rot.from_euler("xyz", [0, 0, 0], degrees=True).as_quat() # X is up
 
 # Loaded end: gravity load
-n_end = np.array([0, 0, -9.8*0.01])
+n_end = np.array([0, 0, -9.8*0.001])
 m_end = np.array([0, 0, 0])
 
 # Pack the boundry conditions into an evaluation function
@@ -36,5 +36,5 @@ y_0_mesh[0, :] = s_grid
 bvp_soln = solve_bvp(rate_func_bvp, f_bound_conds, s_grid, y_0_mesh)
 
 ## Plot the solution
-fig = plot_transforms(bvp_soln.y[0:3, :], bvp_soln.y[3:7, :])
+fig = plot_rod_plotly(bvp_soln)
 fig.show()

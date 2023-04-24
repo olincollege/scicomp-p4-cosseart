@@ -50,10 +50,14 @@ def plot_transforms(posns, quats, axis_length=0.1, marker_size = 3, fig=go.Figur
 
 def plot_rod_plotly(soln):
     fig = go.Figure()
+
+    fig = plot_transforms(soln.y[0:3, :], soln.y[3:7, :], fig=fig)
+
     fig.add_trace(go.Scatter3d(
         x = soln.y[0, :],
         y = soln.y[1, :],
         z = soln.y[2, :],
+        name="Rod",
         marker=dict(size=2)
     ))
 
@@ -77,8 +81,6 @@ def plot_rod_plotly(soln):
             yaxis=dict(range=new_ranges[1, :]),
             zaxis=dict(range=new_ranges[2, :])
         ),
-        height=600,
-        width=800,
     )
     fig.show()
 

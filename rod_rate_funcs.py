@@ -21,25 +21,19 @@ def mat_skew_sym_3(omega):
 
 def mat_skew_sym_4(omega):
     # Skew symmetric matrix for converting body frame angular velocities to the dq/dt quaternion rate of change
-    # See https://math.stackexchange.com/questions/1797541/can-quaternions-be-used-to-represent-rotation-rate
-    # TODO: Validate which one of these two possible implementations are correct.
+    # See https://math.stackexchange.com/q/1797542 
     x, y, z = omega
     
-    # Omega = np.array([
-    #     [-0, -x, -y, -z],
-    #     [x, -0, z, -y],
-    #     [y, -z, 0, x],
-    #     [z, y, -x, 0]
-    # ])
-    
-    # Correction for SciPy quaternions having the real component at the end:
+    # See https://arxiv.org/pdf/1711.02508.pdf  pg 7, eq 17 and 18.
+    # Take the Right multiplication and substitute in qw=0, qx=omega_x, qy=omega_y, qz=omega_z
+    # Motivation: See pg 21 eq 93. To integrat a body-frame angular velocity in the world frame we must multiply from the right
+    # the orientation by the angular velocity. This is the corresponding matrix to that operation.
     Omega = np.array([
-        [-x, -y, -z, 0],
         [0, z, -y, x],
         [-z, 0, x, y],
-        [y, -x, 0, z]
+        [y, -x, 0, z],
+        [-x, -y, -z, 0]
     ])
-    
     return Omega
 
 # Implement Rucker's equation
