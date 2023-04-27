@@ -9,6 +9,9 @@ from scipy.spatial.transform import Rotation as rot
 
 st.subheader("Cantilevered Beam Example")
 load_mass = st.slider("Load (kg)", 0., 0.05, 0.01, step=0.001, format="%.3f")
+load_torsion_moment = st.slider("Load torsion moment (Nm)", -20., 20., 0.0, step=0.5, format="%.3f")
+load_y_moment = st.slider("Load y moment(Nm)", -0.1, 0.1, 0.0, step=0.005, format="%.3f")
+load_z_moment = st.slider("Load z moment(Nm)", -0.1, 0.1, 0.0, step=0.005, format="%.3f")
 
 ## Define our boundary conditions
 # Wall end: fix position and orientation
@@ -17,7 +20,7 @@ R_q_0 = rot.from_euler("xyz", [0, 0, 0], degrees=True).as_quat() # X is up
 
 # Loaded end: gravity load
 n_end = np.array([0, 0, -9.8*load_mass])
-m_end = np.array([0, 0, 0])
+m_end = np.array([load_torsion_moment, load_y_moment, load_z_moment])
 
 # Pack the boundry conditions into an evaluation function
 boundary_conditions = np.concatenate([p_0, R_q_0, n_end, m_end])

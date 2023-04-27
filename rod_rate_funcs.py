@@ -85,7 +85,7 @@ def rate_func_bvp(s, y):
     f = np.array([0., 0., 0.])
     l = np.array([0., 0., 0.])
     K_se = np.diag([0.1, 10., 10.]) # Stiffnesses: [stretch, x_shear, y_shear]
-    K_bt = 0.1 * np.diag([100., 1., 1.]) # Stiffnesses: [torsion, bending_y, bending_z]
+    K_bt = 0.1 * np.diag([0.1, 1., 1.]) # Stiffnesses: [torsion, bending_y, bending_z]
 
     # TODO: You shouldn't need to define both v_star and vdot_star
     # Could numerically differentiate one to get the other..?
