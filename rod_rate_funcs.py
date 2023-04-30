@@ -36,50 +36,6 @@ def mat_skew_sym_4(omega):
     ])
     return Omega
 
-# Implement Rucker's equation
-# y:= [p, R, v, u]
-# 
-# We store R not as its full rotation matrix but instead in quaternion form, giving a final expanded state:
-# [x, y, z, q1, q2, q3, q4, v1, v2, v3, u1, u2, u3]
-def rate_func_ivp(s, y, f, l, v_star, u_star, vdot_star, udot_star, K_se, K_bt):    
-    p = y[0:3]
-    R_q = y[3:7]
-    v = y[7:10]
-    u = y[10:13]
-    
-    # Apply conversions between matrix-vecor forms
-    # !!!!! REMEMBER: SCIPY QUATERNIONS HAVE W LAST !!!!!
-    R = rot.from_quat(R_q).as_matrix() # We store the rotation as quaternion in state for compactness; now convert to mat
-    u_hat = mat_skew_sym_3(u)
-    v_hat = mat_skew_sym_3(v)
-    
-    ## System of ODEs from Rucker
-    # Rate of change of position is the body-frame velocity rotated to world frame:
-    pdot = R @ v
-    
-    # Rate of change of orinetation quaternion in wordl frame is the skew-symmetric form of angular vel
-    # converted to an angular velocity in world frame by multiplying with current orientation quaternion
-    R_qdot = 0.5 * mat_skew_sym_4(u) @ R_q
-    
-    # Calculate forces and moments at the current point along the rod:
-    # force per unit of s: N/m = kg m /s^2 m = kg/s^2
-    # g / (rho*A) = m/s^2 * (kg/m^3 * m^2) = m/s^2 * kg/m = kg/s^2 :)
-    rho_g_cm3 = 1.1 # g/cm^3
-    rho = rho_g_cm3 * 100**2 / 1000 # kg/m^3
-    A = (0.0254/4)**2 * np.pi # m^2
-    f_g_world = np.array([0, 0, -9.8 * (rho*A)])
-    f += f_g_world
-    
-    # Beam bending equlibrium constituitive equations
-    vdot = vdot_star - np.linalg.inv(K_se) @ (u_hat @ K_se @ (v - v_star) + R.T @ f)
-    udot = udot_star - np.linalg.inv(K_bt) @ (u_hat @ K_bt @ (u - u_star) + K_se @ v_hat @ (v - v_star) + R.T @ l)
-    
-    # import pdb; pdb.set_trace()
-    
-    dy = np.concatenate([pdot, R_qdot, vdot, udot])
-    
-    return dy
-
 def rate_func_bvp(s, y):
     ## Define constants
     f = np.array([0., 0., 0.])
