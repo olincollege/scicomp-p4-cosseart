@@ -1,7 +1,6 @@
 import plotly.graph_objects as go
 import numpy as np
 from scipy.spatial.transform import Rotation as rot
-import matplotlib.pyplot as plt
 
 # TODO: Just take in a soln. object rather than posns and quats
 def plot_transforms(posns, quats, axis_length=0.1, marker_size = 3, fig=go.Figure()):
@@ -47,51 +46,3 @@ def plot_transforms(posns, quats, axis_length=0.1, marker_size = 3, fig=go.Figur
     ))
     
     return fig
-
-def plot_rod_plotly(soln):
-    fig = go.Figure()
-
-    fig = plot_transforms(soln.y[0:3, :], soln.y[3:7, :], fig=fig)
-
-    fig.add_trace(go.Scatter3d(
-        x = soln.y[0, :],
-        y = soln.y[1, :],
-        z = soln.y[2, :],
-        name="Rod",
-        marker=dict(size=3),
-        line=dict(width=5, color='black')
-    ))
-
-    mins = np.min(soln.y[0:3, :], axis=1)
-    maxs = np.max(soln.y[0:3, :], axis=1)
-    lims = np.array([mins, maxs]).T
-    ranges = maxs - mins
-    midpoints = np.atleast_2d(np.mean(lims, axis=1)).T
-    max_range = np.max(ranges)
-
-    new_ranges = midpoints + np.array([
-        [-max_range, max_range],
-        [-max_range, max_range],
-        [-max_range, max_range]
-    ])
-
-    fig.update_layout(
-        scene=dict(
-            aspectmode='manual',
-            xaxis=dict(range=new_ranges[0, :]),
-            yaxis=dict(range=new_ranges[1, :]),
-            zaxis=dict(range=new_ranges[2, :])
-        ),
-    )
-
-    return fig
-
-def plot_rod_mpl(soln):
-    # Using matplotlib for now as plotly is being annoying about rods
-    fig = plt.figure()
-    ax = plt.axes(projection="3d")
-    ax.plot(soln.y[0, :], soln.y[1, :], soln.y[2, :], marker='o')
-    ax.stem(soln.y[0, :], soln.y[1, :], soln.y[2, :])
-    # ax.axis("equal")
-    plt.show()
-    
