@@ -39,7 +39,7 @@ $ python3 -m pip install -r requirements.txt
 
 This project uses Streamlit to run the main app in an interactive format. Start the main Streamlit app with the following command:
 ```bash
-$ streamlit run main.py
+$ streamlit run Welcome.py
 ```
 
 You should be off to the races!
