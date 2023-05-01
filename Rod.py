@@ -21,6 +21,8 @@ class RodParams:
 class Rod:
     params: RodParams
     y: np.ndarray
+    marker_style: dict  = dict(size=3)
+    line_style: dict    = dict(width=5, color="black")
 
     def __init__(self, params=RodParams):
         ## Initialize all the variables needed for the boundary value problem that are worth storing
@@ -64,8 +66,12 @@ class Rod:
         bvp_soln = solve_bvp(rate_func_bvp, f_bound_conds, s_grid, y_0_mesh)
         self.y = bvp_soln.y
 
-    def plot(self, fig=go.Figure()):
-        # TODO: Move this into Rod.plot()
+    def plot(self, fig=go.Figure(), marker=None, line=None):
+        if marker is not None:
+            self.marker_style = marker
+
+        if line is not None:
+            self.line_style = line
 
         fig = plot_transforms(self.y[0:3, :], self.y[3:7, :], fig=fig)
 
@@ -74,8 +80,8 @@ class Rod:
             y = self.y[1, :],
             z = self.y[2, :],
             name="Rod",
-            marker=dict(size=3),
-            line=dict(width=5, color='black')
+            marker=self.marker_style,
+            line=self.line_style
         ))
 
         mins = np.min(self.y[0:3, :], axis=1)
