@@ -22,7 +22,7 @@ def plot_transforms(posns, quats, axis_length=0.1, marker_size = 3, show=True, f
         idx += 3
         
     axis_names = ["x", "y", "z"]
-    axis_colors = ["red", "green", "blue"]
+    axis_colors = ["#D81B60", "#00BF9F", "#278DE6"]
     for i, axis in enumerate(body_points_xyz):
         fig.add_trace(go.Scatter3d(
             x=axis[0, :],
