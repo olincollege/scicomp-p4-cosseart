@@ -1,3 +1,5 @@
+import copy
+
 import streamlit as st
 
 import numpy as np
@@ -11,8 +13,7 @@ st.header("Cantilever Test")
 load_mass = st.slider("Load (kg)", 0., 0.05, 0.01, step=0.001, format="%.3f")
 
 ## Create boundary condition objects
-F = -9.8 * load_mass
-stress = np.array([0, 0, F])
+stress = np.array([0, 0, -9.8*load_mass])
 moment = np.array([0, 0, 0])
 
 base_bc = PoseBC(np.array([0, 0, 0]), np.array([0, 0, 0, 1]))   # Base situated at origin
@@ -23,6 +24,7 @@ rod.solve_equillibrium(base_bc, tip_bc)
 
 # Now calculate the Timoshenko beam solution from Gazzola et al 2018
 # TODO: should this get moved somewhere else so that streamlit is just UI?
+F = np.linalg.norm(stress)
 alpha_AG = rod.params.K_se[1, 1]
 EI = rod.params.K_bt[1, 1]
 L = rod.params.l
@@ -35,8 +37,8 @@ fig_scene = go.Figure()
 fig_scene = rod.plot(fig_scene)
 fig_scene.update_layout(height = 800, width = 600, scene_camera=dict(eye=dict(x=0.5,y=1.1,z=0.4)))
 
-analytic_linestyle = rod.line_style
-analytic_linestyle["color"] = "red"
+analytic_linestyle = copy.deepcopy(rod.line_style)
+analytic_linestyle["color"] = "darkkhaki"
 fig_scene.add_trace(go.Scatter3d(
     x=s,
     y=np.zeros(s.shape),
@@ -48,7 +50,6 @@ fig_scene.add_trace(go.Scatter3d(
 
 st.plotly_chart(fig_scene, use_container_width=True)
 
-# TODO!!! Implement the analytic timoshenko beam solution from Gazzola et al 2018.
 st.subheader("Displacement Comparison")
 fig_displacement = go.Figure()
 fig_displacement.add_trace(go.Scatter(

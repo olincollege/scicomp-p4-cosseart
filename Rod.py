@@ -14,8 +14,8 @@ from visual_tools import plot_transforms
 class RodParams:
     """ Dataclass for storing rod parameters
     """
-    K_se: np.ndarray    = np.eye(3)
-    K_bt: np.ndarray    = np.eye(3)
+    K_se: np.ndarray    = np.diag([0.1, 10., 10.])
+    K_bt: np.ndarray    = 0.1 * np.diag([0.1, 1., 1.])
     l: float            = 1
 
 class Rod:
@@ -50,7 +50,6 @@ class Rod:
 
         # 2. Create the initial condition mesh
         ## Initialize solver
-        # TODO: Move this to Rod.solve_equilibrium()
         # Create mesh point coordinates
         s_grid = np.linspace(0, 1, 10)
 
