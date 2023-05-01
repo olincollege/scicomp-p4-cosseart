@@ -28,7 +28,7 @@ class Rod:
         ## Initialize all the variables needed for the boundary value problem that are worth storing
         self.params = params
 
-    def solve_equillibrium(self, base_bc: PoseBC, tip_bc: LoadBC):
+    def solve_equillibrium(self, base_bc: PoseBC, tip_bc: LoadBC, n_points=10):
         # Initialize helper variables and solve the problem
         # 1. Create the boundary value callable
         ## Define our boundary conditions
@@ -51,7 +51,7 @@ class Rod:
         # 2. Create the initial condition mesh
         ## Initialize solver
         # Create mesh point coordinates
-        s_grid = np.linspace(0, 1, 10)
+        s_grid = np.linspace(0, 1, n_points)
 
         # Create initial conditions (along the rod)
         p_0 = np.array([0, 0, 0])
@@ -59,7 +59,7 @@ class Rod:
         m_0 = np.array([0, 0, 0])
         n_0 = np.array([0, 0, 0])
         y_0 = np.concatenate([p_0, R_0, m_0, n_0])
-        y_0_mesh = np.repeat(np.atleast_2d(y_0).T, 10, axis=1)
+        y_0_mesh = np.repeat(np.atleast_2d(y_0).T, n_points, axis=1)
         y_0_mesh[0, :] = s_grid
 
         bvp_soln = solve_bvp(rate_func_bvp, f_bound_conds, s_grid, y_0_mesh)
