@@ -14,21 +14,21 @@ from BoundaryConditions import PoseBC, LoadBC
 st.set_page_config(layout="wide")
 
 st.header("Cantilever Test")
-D_half = st.slider("Dist. to move each end (m)", 0., 0.25, 0., step=0.0025)
-phi_half = st.slider("Angle to rotate each end (deg)", 0, 3000, 0, step=10)
-# n_turns = st.slider("Number of full rotations to turn each end", 0, 30, 0, step=1)
-# phi_half = n_turns * 360
+f_in = st.slider("Compressive force on each side (N)", 0., 0.1, 0., step=0.001)
+m = st.slider("Twisting moment on each side (Nm)", 0., 1., 0., step=0.01)
 n_points = st.slider("Initial number of solution points (#)", 3, 100, 10, step=1)
 show_poses = st.checkbox("Show poses", 1)
 
 rod = Rod()
 
 ## Create boundary condition objects
-R_base = rot.from_euler("xyz", [phi_half, 0, 0], degrees=True).as_quat()
-base_bc = PoseBC(np.array([D_half, 0, 0]), R_base)    # Base situated at origin
+stress_base = np.array([f_in, 0, 0])
+moment_base = np.array([m, 0, 0])
+base_bc = LoadBC(stress_base, moment_base)
 
-R_tip = rot.from_euler("xyz", [-phi_half, 0, 0], degrees=True).as_quat()
-tip_bc = PoseBC(np.array([rod.params.l - D_half, 0, 0]), R_tip)                                 # Tip loaded with specified strain and moments
+stress_tip = np.array([-f_in, 0, 0])
+moment_tip = np.array([-m, 0, 0])
+tip_bc = LoadBC(stress_tip, moment_tip)
 
 rod.solve_equillibrium(base_bc, tip_bc, n_points = n_points)
 # TODO: Calculate phi along the rod

@@ -14,6 +14,7 @@ from BoundaryConditions import PoseBC, LoadBC
 # 1. Plot a bending rod simulation result, no sliders
 # 2. Give a little introductory blurb: page navigation, sandbox, benchmarks, features included and not included
 st.header("Elastic Beam Simulation")
+st.text("TODO: Write a little blurb here!")
 load_mass = st.slider("Load (kg)", 0., 0.05, 0.01, step=0.001, format="%.3f")
 load_torsion_moment = st.slider("Load torsion moment (Nm)", -1., 1., 0.0, step=0.025, format="%.3f")
 load_y_moment = st.slider("Load y moment(Nm)", -0.1, 0.1, 0.0, step=0.005, format="%.3f")

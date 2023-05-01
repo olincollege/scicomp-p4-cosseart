@@ -29,28 +29,12 @@ class Rod:
         self.params = params
 
     def solve_equillibrium(self, base_bc: RodBC, tip_bc: RodBC, n_points=10):
-        ## Initialize helper variables and solve the problem
-        # 1. Build the boundary conditions callable
         if isinstance(base_bc, PoseBC) and isinstance(tip_bc, LoadBC):
-            boundary_conditions = np.concatenate([
-                base_bc.position,
-                base_bc.orientation,
-                tip_bc.stress,
-                tip_bc.moment
-            ])
-            f_bound_conds = lambda ya, yb: np.concatenate([ya[0:7], yb[7:13]]) - boundary_conditions
+            f_bound_conds = lambda ya, yb: np.concatenate([base_bc.residual(ya), tip_bc.residual(yb)])
         elif isinstance(base_bc, PoseBC) and isinstance(tip_bc, PoseBC):
-            boundary_conditions = np.concatenate([
-                base_bc.position, rot.from_quat(base_bc.orientation).as_rotvec(),
-                tip_bc.position, tip_bc.orientation
-            ])
-            def f_bound_conds(ya, yb):
-                return np.concatenate([
-                    ya[0:3], rot.from_quat(ya[3:7]).as_rotvec(),
-                    yb[0:3], yb[3:7] 
-                ]) - boundary_conditions
-        else:
-            raise TypeError("Unsupported combination of boundary conditions! Base must PoseBC")
+            f_bound_conds = lambda ya, yb: np.concatenate([base_bc.residual(ya), tip_bc.residual(yb, rotvec=True)])
+        elif isinstance(base_bc, LoadBC) and isinstance(tip_bc, LoadBC):
+            f_bound_conds = lambda ya, yb: np.concatenate([base_bc.residual(ya), tip_bc.residual(yb), [np.dot(base_bc.residual(ya), tip_bc.residual(yb))]])
 
         # 2. Create the initial condition mesh
         ## Initialize solver
