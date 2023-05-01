@@ -14,21 +14,26 @@ from BoundaryConditions import PoseBC, LoadBC
 st.set_page_config(layout="wide")
 
 st.header("Cantilever Test")
-f_in = st.slider("Compressive force on each side (N)", 0., 0.1, 0., step=0.001)
-m = st.slider("Twisting moment on each side (Nm)", 0., 1., 0., step=0.01)
+st.subheader("Test Description")
+st.markdown("""
+    **Expected outcome:** When you both compress and twist the beam, at some point it should buckle!
+
+    **Actual outcome:** When you compress the beam it doubles in on itself / inverts so that the length becomes negative. Like it just goes backwards. Thus no amount of twisting can make it buckle.
+""")
+
+f_compression = st.slider("Stretch(+) / Compression(-) force on tip (N)", -1000, 1000, 0, step=10)
+m_torsion = st.slider("Twisting moment on tip (Nm)", int(-1e6), int(1e6), 0, step=100)
 n_points = st.slider("Initial number of solution points (#)", 3, 100, 10, step=1)
 show_poses = st.checkbox("Show poses", 1)
 
 rod = Rod()
 
-## Create boundary condition objects
-stress_base = np.array([f_in, 0, 0])
-moment_base = np.array([m, 0, 0])
-base_bc = LoadBC(stress_base, moment_base)
+## Create boundary condition object
+stress = np.array([f_compression, 0, 0])
+moment = np.array([m_torsion, 0, 0])
 
-stress_tip = np.array([-f_in, 0, 0])
-moment_tip = np.array([-m, 0, 0])
-tip_bc = LoadBC(stress_tip, moment_tip)
+base_bc = PoseBC(np.array([0, 0, 0]), np.array([0, 0, 0, 1]))   # Base situated at origin
+tip_bc = LoadBC(stress, moment)                                 # Tip loaded with specified strain and moments
 
 rod.solve_equillibrium(base_bc, tip_bc, n_points = n_points)
 # TODO: Calculate phi along the rod
@@ -43,10 +48,8 @@ with col_1:
     fig_scene = rod.plot(fig_scene, show_poses=True)
     fig_scene.update_layout(height = 800, width = 600, scene_camera=dict(eye=dict(x=0.5,y=1.1,z=0.4)))
 
-    analytic_linestyle = copy.deepcopy(rod.line_style)
-    analytic_linestyle["color"] = "darkkhaki"
-
     st.plotly_chart(fig_scene, use_container_width=True)
 
 with col_2:
     st.subheader("Curvature Comparison")
+    st.error("Currently does not work :(")

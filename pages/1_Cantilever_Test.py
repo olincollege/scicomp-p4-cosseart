@@ -12,6 +12,15 @@ from BoundaryConditions import PoseBC, LoadBC
 st.set_page_config(layout="wide")
 
 st.header("Cantilever Test")
+st.subheader("Test Description")
+st.markdown("""
+    **Expected outcome:** We know the analytic solution of applying a point load to the free end of a beam fixed at the other end. Our simulation should match the expected solution
+
+    **Actual outcome:** Our simulation comes close to the analytic solution, but has errors at higher loads. It is unclear why this is - increasing the resolution of the BVP solution does not seem to change the error.
+    
+    The test scenario and analytic solution is taken from page 12 of [Gazzola et al 2018](https://mattia-lab.com/wp-content/uploads/2018/06/Gazzola_RSOS_2018.pdf)
+""")
+
 load_mass = st.slider("Load (kg)", 0., 0.05, 0.01, step=0.001, format="%.3f")
 n_points = st.slider("Initial number of solution points (#)", 3, 100, 10, step=1)
 show_poses = st.checkbox("Show poses", 1)

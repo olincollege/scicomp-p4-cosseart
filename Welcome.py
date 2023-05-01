@@ -16,11 +16,18 @@ st.set_page_config(layout="wide")
 # 1. Plot a bending rod simulation result, no sliders
 # 2. Give a little introductory blurb: page navigation, sandbox, benchmarks, features included and not included
 st.header("Elastic Beam Simulation")
-st.text("TODO: Write a little blurb here!")
+st.caption("Bill Fan | SciComp final project")
+st.markdown("""
+    **Welcome to my final project! 🐍**
+    - This project simulates the static equillibrium configuration of elastic rods subject to large deformations. We implement the Cosserat Rod equations as described in [Rucker & Webster 2011](https://ieeexplore.ieee.org/abstract/document/5957337).
+    - This is the home page, with a sandbox environment of a rod fixed at one end. You can define linear and rotational loads to apply unto the free tip of the rod.
+    - On the left sidebar you can navigate to the specific benchmarking test pages. Currently only the cantilever beam scenario actually works.
+""")
 
 col_1, col_2 = st.columns(2)
 
 with col_2:
+    st.subheader("Simulation parameters")
     col_linear, col_angular = st.columns(2)
     with col_linear:
         x_force = st.slider("X force on tip (N)", -10., 10., 0., step=0.1)
@@ -32,10 +39,12 @@ with col_2:
         load_y_moment = st.slider("Y bending moment on tip (Nm)", -0.1, 0.1, 0.0, step=0.005, format="%.3f")
         load_z_moment = st.slider("Z bending moment on tip (Nm)", -0.1, 0.1, 0.0, step=0.005, format="%.3f")
 
+    st.write("Toggle 'Show Poses' to change if poses along the rods are shown by default upon replots.")
     show_poses = st.checkbox("Show poses", 1)
 
 with col_1:
     ## Create boundary condition objects
+    st.subheader("Simulation scene")
     stress = np.array([x_force, y_force, z_force])
     moment = np.array([load_torsion_moment, load_y_moment, load_z_moment])
 
