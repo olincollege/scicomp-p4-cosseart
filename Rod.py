@@ -28,25 +28,29 @@ class Rod:
         ## Initialize all the variables needed for the boundary value problem that are worth storing
         self.params = params
 
-    def solve_equillibrium(self, base_bc: PoseBC, tip_bc: LoadBC, n_points=10):
-        # Initialize helper variables and solve the problem
-        # 1. Create the boundary value callable
-        ## Define our boundary conditions
-        # TODO: Move this into the RodBC constructor?
-        # Wall end: fix position and orientation
-        p_0 = base_bc.position
-        R_0 = base_bc.orientation 
-
-        # Loaded end: gravity load
-        # n_end = np.array([0, 0, -9.8*load_mass])
-        # m_end = np.array([load_torsion_moment, load_y_moment, load_z_moment])
-        n_end = tip_bc.stress
-        m_end = tip_bc.moment
-
-        # Pack the boundry conditions into an evaluation function
-        # TODO: Intelligently design the boundary conditions vector and function based on the specific types of base_bc and tip_bc
-        boundary_conditions = np.concatenate([p_0, R_0, n_end, m_end])
-        f_bound_conds = lambda ya, yb: np.concatenate([ya[0:7], yb[7:13]]) - boundary_conditions
+    def solve_equillibrium(self, base_bc: RodBC, tip_bc: RodBC, n_points=10):
+        ## Initialize helper variables and solve the problem
+        # 1. Build the boundary conditions callable
+        if isinstance(base_bc, PoseBC) and isinstance(tip_bc, LoadBC):
+            boundary_conditions = np.concatenate([
+                base_bc.position,
+                base_bc.orientation,
+                tip_bc.stress,
+                tip_bc.moment
+            ])
+            f_bound_conds = lambda ya, yb: np.concatenate([ya[0:7], yb[7:13]]) - boundary_conditions
+        elif isinstance(base_bc, PoseBC) and isinstance(tip_bc, PoseBC):
+            boundary_conditions = np.concatenate([
+                base_bc.position, rot.from_quat(base_bc.orientation).as_rotvec(),
+                tip_bc.position, tip_bc.orientation
+            ])
+            def f_bound_conds(ya, yb):
+                return np.concatenate([
+                    ya[0:3], rot.from_quat(ya[3:7]).as_rotvec(),
+                    yb[0:3], yb[3:7] 
+                ]) - boundary_conditions
+        else:
+            raise TypeError("Unsupported combination of boundary conditions! Base must PoseBC")
 
         # 2. Create the initial condition mesh
         ## Initialize solver
@@ -65,14 +69,14 @@ class Rod:
         bvp_soln = solve_bvp(rate_func_bvp, f_bound_conds, s_grid, y_0_mesh)
         self.y = bvp_soln.y
 
-    def plot(self, fig=go.Figure(), marker=None, line=None):
+    def plot(self, fig=go.Figure(), marker=None, line=None, show_poses=False):
         if marker is not None:
             self.marker_style = marker
 
         if line is not None:
             self.line_style = line
 
-        fig = plot_transforms(self.y[0:3, :], self.y[3:7, :], fig=fig)
+        fig = plot_transforms(self.y[0:3, :], self.y[3:7, :], fig=fig, show=show_poses)
 
         fig.add_trace(go.Scatter3d(
             x = self.y[0, :],

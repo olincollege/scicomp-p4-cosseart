@@ -3,7 +3,7 @@ import numpy as np
 from scipy.spatial.transform import Rotation as rot
 
 # TODO: Just take in a soln. object rather than posns and quats
-def plot_transforms(posns, quats, axis_length=0.1, marker_size = 3, fig=go.Figure()):
+def plot_transforms(posns, quats, axis_length=0.1, marker_size = 3, show=True, fig=go.Figure()):
     # 3D matrix which stores the list of individual points to plot for each body-axis (x, y, z)
     # For each pose: store start point (at the center of pose), end point of the body-axis, and then insert 'None' to separate lines.
     # Note there will be a trailing 'None'.
@@ -32,6 +32,7 @@ def plot_transforms(posns, quats, axis_length=0.1, marker_size = 3, fig=go.Figur
             mode="lines+markers",
             legendgroup="poses",
             showlegend=False,
+            visible= True if show else "legendonly",
             marker=dict(color=axis_colors[i], size=marker_size)
         ))
     
@@ -42,6 +43,7 @@ def plot_transforms(posns, quats, axis_length=0.1, marker_size = 3, fig=go.Figur
         mode="markers",
         name="Poses",
         legendgroup="poses",
+        visible= True if show else "legendonly",
         marker=dict(color="black", size=marker_size)
     ))
     

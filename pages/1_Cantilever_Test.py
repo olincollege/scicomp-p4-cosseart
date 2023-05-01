@@ -14,6 +14,7 @@ st.set_page_config(layout="wide")
 st.header("Cantilever Test")
 load_mass = st.slider("Load (kg)", 0., 0.05, 0.01, step=0.001, format="%.3f")
 n_points = st.slider("Initial number of solution points (#)", 3, 100, 10, step=1)
+show_poses = st.checkbox("Show poses", 1)
 
 ## Create boundary condition objects
 stress = np.array([0, 0, -9.8*load_mass])
@@ -39,7 +40,7 @@ col_1, col_2 = st.columns(2)
 with col_1:
     st.subheader("Visual Comparsion")
     fig_scene = go.Figure()
-    fig_scene = rod.plot(fig_scene)
+    fig_scene = rod.plot(fig_scene, show_poses=show_poses)
     fig_scene.update_layout(height = 800, width = 600, scene_camera=dict(eye=dict(x=0.5,y=1.1,z=0.4)))
 
     analytic_linestyle = copy.deepcopy(rod.line_style)
